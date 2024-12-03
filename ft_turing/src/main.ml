@@ -4,32 +4,23 @@
 - it is accessible and readable
 - it has a json extension *)
 
+(* Example: main.ml *)
+
 let check_file_input args =
   match args with
-  | [| _; filename ; _machine_input|] ->
-    if String.length filename >= 5 && String.sub filename (String.length filename - 5) 5 = ".json" then
-      try
-        let ic = open_in filename in
-        close_in ic;
-        Some filename
-      with
-      | Sys_error err ->
-        print_endline ("Error: " ^ err);
-        None
-    else
-      (print_endline "Error: The file must have a .json extension.";
+  | [| _; filename |] when String.length filename >= 5 && String.sub filename (String.length filename - 5) 5 = ".json" ->
+    (try
+       let ic = open_in filename in
+       close_in ic;
+       Some filename
+     with Sys_error err ->
+       print_endline ("Error: " ^ err);
        None)
   | _ ->
-    print_endline "Error: Please provide one machine file and a machine input.";
+    print_endline "Error: Please provide a JSON file as input.";
     None
 
 let () =
   match check_file_input (Sys.argv) with
-  | Some filename ->
-    print_endline ("Parsing machine '" ^ filename ^ "'...")
-    let key_mappings, move_sequences = Parser.process_grammar_file filename in
-
-
-    (* Machine.machine_loop machine_input *)
-
+  | Some filename -> print_endline ("Parsing machine: " ^ filename)
   | None -> exit 1

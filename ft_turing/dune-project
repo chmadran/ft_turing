@@ -1,4 +1,4 @@
-(lang dune 3.16)
+(lang dune 3.8)
 
 (name ft_turing)
 
@@ -17,6 +17,7 @@
 
 (package
  (name ft_turing)
+ (allow_empty)
  (synopsis "A short synopsis")
  (description "A longer description")
  (depends ocaml dune)

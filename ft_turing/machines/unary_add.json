@@ -1,0 +1,23 @@
+{
+    "name": "unary_addition_executor",
+    "alphabet": [ "0", "1", ".", "-", "y", "n" ],
+    "blank": ".",
+    "states": [ "read_machine", "execute_machine", "writeyes", "writeno", "HALT" ],
+    "initial": "read_machine",
+    "finals": [ "HALT" ],
+    "transitions": {
+      "read_machine": [
+        { "read": ".", "to_state": "execute_machine", "write": ".", "action": "RIGHT" }
+      ],
+      "execute_machine": [
+        { "read": ".", "to_state": "writeyes", "write": ".", "action": "RIGHT" }
+      ],
+      "writeyes": [
+        { "read": ".", "to_state": "HALT", "write": "y", "action": "RIGHT" }
+      ],
+      "writeno": [
+        { "read": ".", "to_state": "HALT", "write": "n", "action": "RIGHT" }
+      ]
+    }
+  }
+  

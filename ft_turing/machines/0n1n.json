@@ -1,0 +1,30 @@
+{
+    "name": "0n1n_detector",
+    "alphabet": [ "0", "1", ".", "y", "n" ],
+    "blank": ".",
+    "states": [ "scanright", "matchone", "matchzero", "writeyes", "writeno", "HALT" ],
+    "initial": "scanright",
+    "finals": [ "HALT" ],
+    "transitions": {
+      "scanright": [
+        { "read": "0", "to_state": "matchone", "write": ".", "action": "RIGHT" },
+        { "read": "1", "to_state": "writeno", "write": ".", "action": "RIGHT" },
+        { "read": ".", "to_state": "writeyes", "write": ".", "action": "RIGHT" }
+      ],
+      "matchone": [
+        { "read": "1", "to_state": "matchzero", "write": ".", "action": "LEFT" },
+        { "read": ".", "to_state": "writeno", "write": ".", "action": "RIGHT" }
+      ],
+      "matchzero": [
+        { "read": "0", "to_state": "scanright", "write": "0", "action": "RIGHT" },
+        { "read": ".", "to_state": "writeyes", "write": ".", "action": "RIGHT" }
+      ],
+      "writeyes": [
+        { "read": ".", "to_state": "HALT", "write": "y", "action": "RIGHT" }
+      ],
+      "writeno": [
+        { "read": ".", "to_state": "HALT", "write": "n", "action": "RIGHT" }
+      ]
+    }
+  }
+  

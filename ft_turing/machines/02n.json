@@ -1,0 +1,25 @@
+{
+    "name": "0_2n_detector",
+    "alphabet": [ "0", ".", "y", "n" ],
+    "blank": ".",
+    "states": [ "scanright", "countzeros", "writeyes", "writeno", "HALT" ],
+    "initial": "scanright",
+    "finals": [ "HALT" ],
+    "transitions": {
+      "scanright": [
+        { "read": "0", "to_state": "countzeros", "write": ".", "action": "RIGHT" },
+        { "read": ".", "to_state": "writeyes", "write": ".", "action": "RIGHT" }
+      ],
+      "countzeros": [
+        { "read": "0", "to_state": "scanright", "write": ".", "action": "RIGHT" },
+        { "read": ".", "to_state": "writeyes", "write": ".", "action": "RIGHT" }
+      ],
+      "writeyes": [
+        { "read": ".", "to_state": "HALT", "write": "y", "action": "RIGHT" }
+      ],
+      "writeno": [
+        { "read": ".", "to_state": "HALT", "write": "n", "action": "RIGHT" }
+      ]
+    }
+  }
+  

@@ -35,8 +35,14 @@ let validate_transitions transitions states alphabet =
         ) trans_list
     ) transitions
 
-(** Validate the entire Turing machine. *)
+(** Validate the machine's name is not empty. *)
+let validate_name name =
+  if name = "" then
+    failwith "Error: Machine name cannot be empty."
+
+    (** Validate the entire Turing machine. *)
 let validate_machine (machine : Parser.turing_machine) =
+  validate_name machine.name;
   validate_alphabet machine.alphabet;
   validate_blank machine.blank machine.alphabet;
   validate_initial_state machine.initial machine.states;

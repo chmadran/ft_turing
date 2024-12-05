@@ -1,0 +1,127 @@
+
+# Missing required field e.g missing name 
+{
+    "alphabet": [ "1", "0", "." ],
+    "blank": ".",
+    "states": [ "start", "HALT" ],
+    "initial": "start",
+    "finals": [ "HALT" ],
+    "transitions": {
+      "start": [
+        { "read": "1", "to_state": "HALT", "write": "1", "action": "RIGHT" }
+      ]
+    }
+  }
+  
+
+  # Invalid Field Value e.g blank is not part of the alphabet 
+
+  {
+    "name": "invalid_blank",
+    "alphabet": [ "1", "0" ],
+    "blank": ".",
+    "states": [ "start", "HALT" ],
+    "initial": "start",
+    "finals": [ "HALT" ],
+    "transitions": {
+      "start": [
+        { "read": "1", "to_state": "HALT", "write": "1", "action": "RIGHT" }
+      ]
+    }
+  }
+  
+  # transition of an undefined state e.g undefined_state is not in the states list
+
+  {
+    "name": "undefined_state_transition",
+    "alphabet": [ "1", "0", "." ],
+    "blank": ".",
+    "states": [ "start", "HALT" ],
+    "initial": "start",
+    "finals": [ "HALT" ],
+    "transitions": {
+      "undefined_state": [
+        { "read": "1", "to_state": "HALT", "write": "1", "action": "RIGHT" }
+      ]
+    }
+  }
+
+  # final state not in states e.g HALT is not in the states list
+  
+  {
+    "name": "invalid_final_state",
+    "alphabet": [ "1", "0", "." ],
+    "blank": ".",
+    "states": [ "start", "process" ],
+    "initial": "start",
+    "finals": [ "HALT" ],
+    "transitions": {
+      "start": [
+        { "read": "1", "to_state": "process", "write": "1", "action": "RIGHT" }
+      ]
+    }
+  }
+  
+  # Duplicate transition definition e.g duplicate transitions for the same state start and input 1
+
+  {
+    "name": "duplicate_transitions",
+    "alphabet": [ "1", "0", "." ],
+    "blank": ".",
+    "states": [ "start", "HALT" ],
+    "initial": "start",
+    "finals": [ "HALT" ],
+    "transitions": {
+      "start": [
+        { "read": "1", "to_state": "HALT", "write": "1", "action": "RIGHT" },
+        { "read": "1", "to_state": "HALT", "write": "1", "action": "LEFT" }
+      ]
+    }
+  }
+
+# Invalid transition action e.g UP is not a valid action (LEFT or RIGHT only)
+
+{
+    "name": "invalid_action",
+    "alphabet": [ "1", "0", "." ],
+    "blank": ".",
+    "states": [ "start", "HALT" ],
+    "initial": "start",
+    "finals": [ "HALT" ],
+    "transitions": {
+      "start": [
+        { "read": "1", "to_state": "HALT", "write": "1", "action": "UP" }
+      ]
+    }
+  }
+  
+# Empty or missing transitions e.g no transitions defined for start state
+  
+  {
+    "name": "empty_transitions",
+    "alphabet": [ "1", "0", "." ],
+    "blank": ".",
+    "states": [ "start", "HALT" ],
+    "initial": "start",
+    "finals": [ "HALT" ],
+    "transitions": {
+      "start": []
+    }
+  }
+
+# Malformed JSON
+
+{
+    "name": "malformed_json",
+    "alphabet": [ "1", "0", "." ],
+    "blank": ".",
+    "states": [ "start", "HALT"
+    "initial": "start",
+    "finals": [ "HALT" ],
+    "transitions": {
+      "start": [
+        { "read": "1", "to_state": "HALT", "write": "1", "action": "RIGHT" }
+      ]
+    }
+  }
+  

@@ -25,7 +25,7 @@
       print_endline "Error: Please provide a JSON file as input.";
       None
   
-  (* [print_machine machine] prints the parameters of the Turing machine. *)
+  (* [print_machine machine] prints the parameters of the machine. *)
   let print_machine (machine : Parser.turing_machine) =
     let print_list label lst =
       print_endline (label ^ ": [" ^ (String.concat ", " lst) ^ "]")
@@ -48,12 +48,16 @@
       ) transitions      
     ) machine.transitions
   
-  let () =
+    let () =
     match check_file_input (Sys.argv) with
     | Some filename -> 
       print_endline ("Parsing machine: " ^ filename);
       let machine = Parser.parse_turing_machine filename in
-      print_endline ("Successfully parsed machine: " ^ machine.name);
-      print_machine machine
+      (try
+         if Validator.validate_machine machine then
+           print_endline ("Machine validated successfully: " ^ machine.name);
+           print_machine machine
+       with Failure msg ->
+         print_endline ("Validation error: " ^ msg);
+         exit 1)
     | None -> exit 1
-  

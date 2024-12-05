@@ -39,7 +39,29 @@ Implement appropriate error messages if the machine is in a blocked state (i.e.,
 
 ## Parsing
 
-1. Parse the machine
+1. Parse the machine file with the following rules :
+
+* **name:** The name of the described machine. 
+* **alphabet:** Both input and work alphabet of the machine merged into a single alphabet
+for simplicity’s sake, including the blank character. Each character of the alphabet
+must be a string of length strictly equal to 1.
+* **blank:** The blank character, must be part of the alphabet, must NOT be part of the
+input.
+* **states:** The exhaustive list of the machine’s states names.
+* **initial:** The initial state of the machine, must be part of the states list.
+* **finals:** The exhaustive list of the machine’s final states. This list must be a sub-list of
+the states list.
+* **transitions:** A dictionnary of the machine’s transitions indexed by state name. Each
+transition is a list of dictionnaries, and each dictionnary describes the transition for
+a given character under the head of the machine. A transition is defined as follows:
+    * **read:** The character of the machine’s alphabet on the tape under the machine’s
+    head.
+    * **to_state:** The new state of the machine after the transition is done.
+    * **write:** The character of the machine’s alphabet to write on the tape before moving
+    the head.
+    * **action:** Movement of the head for this transition, either LEFT, or RIGHT.
+
+
 2. Parse the tape 
 3. Create the automate
 4. Output the machine's states 

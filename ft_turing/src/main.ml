@@ -34,17 +34,20 @@ let print_machine (machine : Parser.turing_machine) =
   print_list "Final States" machine.finals;
   print_endline "Transitions:";
   List.iter (fun (state, transitions) ->
-    Printf.printf "  %s:\n" state;
+    print_endline ("  " ^ state ^ ":");
     List.iter (fun t ->
-      Printf.printf "    - Read: %s, To State: %s, Write: %s, Action: %s\n"
-        t.Parser.read t.Parser.to_state t.Parser.write
+      print_endline ("   [- Read: " ^ t.Parser.read);
+      print_endline ("    - To State: " ^ t.Parser.to_state);
+      print_endline ("    - Write: " ^ t.Parser.write);
+      print_endline ("    - Action: " ^
         (match t.Parser.action with
-         | Parser.Left -> "LEFT"
-         | Parser.Right -> "RIGHT")
+         | Parser.Left -> "LEFT]\n"
+         | Parser.Right -> "RIGHT]\n"));
     ) transitions      
-  ) machine.transitions
+  ) machine.transitions    
 
-  let () =
+
+let () =
   match check_file_input (Sys.argv) with
   | Some (filename, input) -> 
     print_endline ("Parsing machine: " ^ filename);
@@ -54,10 +57,12 @@ let print_machine (machine : Parser.turing_machine) =
          print_endline ("Machine validated successfully: " ^ machine.name);
          print_machine machine;
          (* Validate the tape input against the machine's alphabet *)
-         Tape_parser.validate_tape_input input machine.alphabet;
-         (* Parse and print the tape input *)
-         let tape = Tape_parser.parse_tape input in
-         Tape_parser.print_tape tape
+         Tape.validate_tape_input input machine.alphabet;
+         (* Calculate tape size based on the input string length *)
+         let tape_size = String.length input in
+         (* Parse and print the tape input with calculated size *)
+         let tape = Tape.parse_tape input tape_size machine.blank.[0] in
+         Tape.print_tape tape
      with
      | Failure msg ->
          print_endline ("Validation error: " ^ msg);
@@ -66,4 +71,3 @@ let print_machine (machine : Parser.turing_machine) =
          print_endline ("File error: " ^ err);
          exit 1)
   | None -> exit 1
-

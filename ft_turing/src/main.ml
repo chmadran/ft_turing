@@ -66,6 +66,7 @@ let () =
            transitions = machine.transitions;
          } in
          print_endline "STARTING MACHINE...";
-         Machine.simulate initial_state machine.finals
+         let headers_printed = ref false in
+         Machine.simulate initial_state machine.finals headers_printed;
        with Failure msg -> Printf.printf "Error: %s\n" msg; exit 1)
   | None -> exit 1

@@ -9,6 +9,15 @@ type machine_state = {
   transitions : (string * transition list) list;
 }
 
+(** Print column headers for the simulation *)
+let print_column_headers tape_width state_width char_width action_width =
+  Printf.printf "%-*s %-*s %-*s %-*s\n"
+    tape_width "TAPE"
+    state_width "TO_STATE"
+    char_width "READ"
+    action_width "ACTION"
+
+
 (** [find_transition transitions state char] retrieves the appropriate transition
     for the given state and character from the list of transitions. *)
 let find_transition transitions state char =
@@ -49,11 +58,19 @@ let apply_transition (state : machine_state) (transition : transition) =
     transitions = state.transitions;
   }
 
-(** [simulate machine_state finals] simulates the Turing machine until it reaches a final state. *)
-let rec simulate (state : machine_state) (finals : string list) =
+(** [simulate machine_state finals headers_printed] simulates the Turing machine until it reaches a final state. *)
+let rec simulate (state : machine_state) (finals : string list) (headers_printed : bool ref) =
   (* Define fixed widths for alignment *)
   let state_width = 10 in
-  let char_width = 3 in
+  let char_width = 2 in
+  let action_width = 10 in
+  let tape_width = String.length state.tape.data + 5 in
+
+  (* Print the column headers only once at the beginning *)
+  if not !headers_printed then (
+    print_column_headers tape_width (state_width + 3) (char_width + 5) action_width;
+    headers_printed := true
+  );
 
   (* Get the character being read as a string for formatting *)
   let current_char = String.make 1 state.tape.data.[state.tape.head] in
@@ -63,7 +80,6 @@ let rec simulate (state : machine_state) (finals : string list) =
   Printf.printf "(%-*s, %*s)\n"
     state_width state.current_state
     char_width current_char;
-
   if List.mem state.current_state finals then
     (* Machine has reached a final state *)
     Printf.printf "Machine halted in state: %s\n" state.current_state
@@ -75,5 +91,4 @@ let rec simulate (state : machine_state) (finals : string list) =
         Printf.printf "Machine halted in an undefined state.\n"
     | Some transition ->
         let new_state = apply_transition state transition in
-        simulate new_state finals
-
+        simulate new_state finals headers_printed

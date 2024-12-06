@@ -27,7 +27,7 @@ let parse_tape input tape_size blank_char =
 (** [print_tape_small tape] prints the current content of the tape in a fixed-width format. *)
 let print_tape_small tape =
   (* Define a fixed width for alignment *)
-  let tape_width = 10 in
+  let tape_width = 5 in
 
   (* Prepare the string representation of the tape with the head highlighted *)
   let head_char = tape.data.[tape.head] in

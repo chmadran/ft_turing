@@ -20,6 +20,14 @@ type turing_machine = {
   transitions : (string * transition list) list;
 }
 
+(** Custom exception for missing JSON fields *)
+exception Missing_field of string
+
+(** Helper to safely retrieve a JSON field and provide a detailed error if it's missing *)
+let get_field json field to_type =
+  try to_type (json |> member field)
+  with Type_error _ -> raise (Missing_field field)
+
 (** Helper to convert string to action type *)
 let action_of_string = function
   | "LEFT" -> Left
@@ -29,10 +37,10 @@ let action_of_string = function
 (** Parse a single transition *)
 let parse_transition json =
   {
-    read = json |> member "read" |> to_string;
-    to_state = json |> member "to_state" |> to_string;
-    write = json |> member "write" |> to_string;
-    action = json |> member "action" |> to_string |> action_of_string;
+    read = get_field json "read" to_string;
+    to_state = get_field json "to_state" to_string;
+    write = get_field json "write" to_string;
+    action = get_field json "action" to_string |> action_of_string;
   }
 
 (** Parse transitions for a state *)
@@ -46,12 +54,15 @@ let parse_transitions json =
 (** Parse the entire Turing machine *)
 let parse_turing_machine filename =
   let json = Yojson.Basic.from_file filename in
-  {
-    name = json |> member "name" |> to_string;
-    alphabet = json |> member "alphabet" |> to_list |> List.map to_string;
-    blank = json |> member "blank" |> to_string;
-    states = json |> member "states" |> to_list |> List.map to_string;
-    initial = json |> member "initial" |> to_string;
-    finals = json |> member "finals" |> to_list |> List.map to_string;
-    transitions = json |> member "transitions" |> parse_transitions;
-  }
+  try
+    {
+      name = get_field json "name" to_string;
+      alphabet = get_field json "alphabet" (fun j -> j |> to_list |> List.map to_string);
+      blank = get_field json "blank" to_string;
+      states = get_field json "states" (fun j -> j |> to_list |> List.map to_string);
+      initial = get_field json "initial" to_string;
+      finals = get_field json "finals" (fun j -> j |> to_list |> List.map to_string);
+      transitions = get_field json "transitions" parse_transitions;
+    }
+  with Missing_field field ->
+    failwith ("Error: Missing required field in JSON: " ^ field)

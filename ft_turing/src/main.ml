@@ -44,12 +44,12 @@ let print_machine (machine : Parser.turing_machine) =
     ) transitions      
   ) machine.transitions
 
-let () =
+  let () =
   match check_file_input (Sys.argv) with
   | Some (filename, input) -> 
     print_endline ("Parsing machine: " ^ filename);
-    let machine = Parser.parse_turing_machine filename in
     (try
+       let machine = Parser.parse_turing_machine filename in
        if Validator.validate_machine machine then
          print_endline ("Machine validated successfully: " ^ machine.name);
          print_machine machine;
@@ -58,7 +58,12 @@ let () =
          (* Parse and print the tape input *)
          let tape = Tape_parser.parse_tape input in
          Tape_parser.print_tape tape
-    with Failure msg ->
-       print_endline ("Validation error: " ^ msg);
-       exit 1)
+     with
+     | Failure msg ->
+         print_endline ("Validation error: " ^ msg);
+         exit 1
+     | Sys_error err ->
+         print_endline ("File error: " ^ err);
+         exit 1)
   | None -> exit 1
+

@@ -1,3 +1,3 @@
 (executable
  (name main)
- (libraries base parser validator tape))
+ (libraries base parser validator tape machine))

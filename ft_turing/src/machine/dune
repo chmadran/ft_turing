@@ -1,0 +1,4 @@
+(library
+ (name machine)
+ (libraries tape parser)
+ (modules machine))

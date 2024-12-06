@@ -25,9 +25,9 @@ let parse_tape input tape_size blank_char =
     }
 
 (** [print_tape_small tape] prints the current content of the tape. *)
-(** let print_tape_small tape =
-  Printf.printf "Tape: [<%c>%s] (size: %d)\n"
-    tape.data.[tape.head] tape.right tape.size *)
+let print_tape_small tape =
+  Printf.printf "Tape: [<%c>%s]  "
+    tape.data.[tape.head] tape.right 
 
 (** [print_tape tape] prints the whole tape structure. *)
 let print_tape tape =

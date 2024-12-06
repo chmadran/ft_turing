@@ -22,7 +22,7 @@ let check_file_input args =
     print_endline "Error: Please provide a JSON file and an input string.";
     None
 
-let print_machine (machine : Parser.turing_machine) =
+(*let print_machine (machine : Parser.turing_machine) =
   let print_list label lst =
     print_endline (label ^ ": [" ^ (String.concat ", " lst) ^ "]")
   in
@@ -44,30 +44,28 @@ let print_machine (machine : Parser.turing_machine) =
          | Parser.Left -> "LEFT]\n"
          | Parser.Right -> "RIGHT]\n"));
     ) transitions      
-  ) machine.transitions    
+  ) machine.transitions   *) 
 
 
 let () =
   match check_file_input (Sys.argv) with
   | Some (filename, input) -> 
-    print_endline ("Parsing machine: " ^ filename);
-    (try
-       let machine = Parser.parse_turing_machine filename in
-       if Validator.validate_machine machine then
-         print_endline ("Machine validated successfully: " ^ machine.name);
-         print_machine machine;
-         (* Validate the tape input against the machine's alphabet *)
+      print_endline ("STARTING PARSER...");
+      (try
+         let machine = Parser.parse_turing_machine filename in
+         (* print_machine machine; *)
+         print_endline ("PARSING DONE...");
+         print_endline ("VALIDATING INPUT...");
          Tape.validate_tape_input input machine.alphabet;
-         (* Calculate tape size based on the input string length *)
          let tape_size = String.length input in
-         (* Parse and print the tape input with calculated size *)
          let tape = Tape.parse_tape input tape_size machine.blank.[0] in
-         Tape.print_tape tape
-     with
-     | Failure msg ->
-         print_endline ("Validation error: " ^ msg);
-         exit 1
-     | Sys_error err ->
-         print_endline ("File error: " ^ err);
-         exit 1)
+         print_endline ("INPUT VALIDATED...");
+         let initial_state : Machine.machine_state = {
+           tape;
+           current_state = machine.initial;
+           transitions = machine.transitions;
+         } in
+         print_endline "STARTING MACHINE...";
+         Machine.simulate initial_state machine.finals
+       with Failure msg -> Printf.printf "Error: %s\n" msg; exit 1)
   | None -> exit 1

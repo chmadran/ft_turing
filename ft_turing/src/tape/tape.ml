@@ -24,10 +24,25 @@ let parse_tape input tape_size blank_char =
       size = tape_size;    (* The size of the tape is the length of the input string *)
     }
 
-(** [print_tape_small tape] prints the current content of the tape. *)
+(** [print_tape_small tape] prints the current content of the tape in a fixed-width format. *)
 let print_tape_small tape =
-  Printf.printf "Tape: [<%c>%s]  "
-    tape.data.[tape.head] tape.right 
+  (* Define a fixed width for alignment *)
+  let tape_width = 10 in
+
+  (* Prepare the string representation of the tape with the head highlighted *)
+  let head_char = tape.data.[tape.head] in
+  let left = String.sub tape.data 0 tape.head in
+  let right =
+    if tape.head + 1 < String.length tape.data then
+      String.sub tape.data (tape.head + 1) (String.length tape.data - tape.head - 1)
+    else
+      ""
+  in
+  let tape_string = Printf.sprintf "[<%c>%s%s]" head_char left right in
+
+  (* Print the tape within the fixed width *)
+  Printf.printf "%-*s  " tape_width tape_string
+
 
 (** [print_tape tape] prints the whole tape structure. *)
 let print_tape tape =

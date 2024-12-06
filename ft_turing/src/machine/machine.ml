@@ -51,9 +51,18 @@ let apply_transition (state : machine_state) (transition : transition) =
 
 (** [simulate machine_state finals] simulates the Turing machine until it reaches a final state. *)
 let rec simulate (state : machine_state) (finals : string list) =
+  (* Define fixed widths for alignment *)
+  let state_width = 10 in
+  let char_width = 3 in
+
+  (* Get the character being read as a string for formatting *)
+  let current_char = String.make 1 state.tape.data.[state.tape.head] in
+
   (* Print the current state of the tape and the machine *)
   Tape.print_tape_small state.tape;
-  Printf.printf "(%s, %c)\n" state.current_state state.tape.data.[state.tape.head];
+  Printf.printf "(%-*s, %*s)\n"
+    state_width state.current_state
+    char_width current_char;
 
   if List.mem state.current_state finals then
     (* Machine has reached a final state *)
@@ -61,8 +70,10 @@ let rec simulate (state : machine_state) (finals : string list) =
   else
     match find_transition state.transitions state.current_state state.tape.data.[state.tape.head] with
     | None ->
-        Printf.printf "No transition defined for state: %s and character: %c\n"
-          state.current_state state.tape.data.[state.tape.head]
+        Printf.printf "No transition defined for state: %s and character: %s\n"
+          state.current_state current_char;
+        Printf.printf "Machine halted in an undefined state.\n"
     | Some transition ->
         let new_state = apply_transition state transition in
         simulate new_state finals
+

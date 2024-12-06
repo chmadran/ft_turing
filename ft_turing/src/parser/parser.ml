@@ -43,9 +43,12 @@ let parse_transition json =
     action = get_field json "action" to_string |> action_of_string;
   }
 
-(** Parse transitions for a state and check for duplicate keys *)
+(** Parse transitions for a state and check for duplicate keys or empty transitions *)
 let parse_transitions json =
   let transition_assoc = json |> to_assoc in
+  if transition_assoc = [] then
+    failwith "Error: No transitions defined in the machine.";
+  
   let seen_states = Hashtbl.create (List.length transition_assoc) in
   List.map (fun (state, transitions) ->
       if Hashtbl.mem seen_states state then

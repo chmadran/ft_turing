@@ -25,13 +25,23 @@ let validate_transitions transitions states alphabet =
   List.iter (fun (state, trans_list) ->
       if not (List.mem state states) then
         failwith ("Error: Undefined state in transitions: " ^ state);
+      
+      (* Detect duplicate transitions *)
+      let seen_transitions = Hashtbl.create (List.length trans_list) in
       List.iter (fun t ->
           if not (List.mem t.read alphabet) then
             failwith ("Error: Undefined read character in transition: " ^ t.read);
           if not (List.mem t.write alphabet) then
             failwith ("Error: Undefined write character in transition: " ^ t.write);
           if not (List.mem t.to_state states) then
-            failwith ("Error: Undefined state in transition: " ^ t.to_state)
+            failwith ("Error: Undefined state in transition: " ^ t.to_state);
+          
+          (* Check for duplicates *)
+          let key = (t.read, t.write, t.to_state, t.action) in
+          if Hashtbl.mem seen_transitions key then
+            failwith ("Error: Duplicate transition detected for state " ^ state ^
+                      " with read = " ^ t.read);
+          Hashtbl.add seen_transitions key true
         ) trans_list
     ) transitions
 
@@ -40,7 +50,7 @@ let validate_name name =
   if name = "" then
     failwith "Error: Machine name cannot be empty."
 
-    (** Validate the entire Turing machine. *)
+(** Validate the entire Turing machine. *)
 let validate_machine (machine : Parser.turing_machine) =
   validate_name machine.name;
   validate_alphabet machine.alphabet;

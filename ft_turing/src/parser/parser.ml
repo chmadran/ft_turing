@@ -43,13 +43,17 @@ let parse_transition json =
     action = get_field json "action" to_string |> action_of_string;
   }
 
-(** Parse transitions for a state *)
+(** Parse transitions for a state and check for duplicate keys *)
 let parse_transitions json =
-  json
-  |> to_assoc
-  |> List.map (fun (state, transitions) ->
-         let transitions = transitions |> to_list |> List.map parse_transition in
-         (state, transitions))
+  let transition_assoc = json |> to_assoc in
+  let seen_states = Hashtbl.create (List.length transition_assoc) in
+  List.map (fun (state, transitions) ->
+      if Hashtbl.mem seen_states state then
+        failwith ("Error: Duplicate state key in transitions: " ^ state);
+      Hashtbl.add seen_states state true;
+      let transitions = transitions |> to_list |> List.map parse_transition in
+      (state, transitions)
+    ) transition_assoc
 
 (** Parse the entire Turing machine *)
 let parse_turing_machine filename =

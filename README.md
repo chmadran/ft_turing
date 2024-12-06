@@ -62,7 +62,9 @@ a given character under the head of the machine. A transition is defined as foll
     * **action:** Movement of the head for this transition, either LEFT, or RIGHT.
 
 
-2. Parse the tape 
+2. Parse the tape :
+- is there a string after the json file ?
+- validate tape : all characters in the input string must be part of the given alphabet
 3. Create the automate
 4. Output the machine's states 
 

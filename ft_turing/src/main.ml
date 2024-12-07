@@ -22,7 +22,7 @@ let check_file_input args =
     print_endline "Error: Please provide a JSON file and an input string.";
     None
 
-(*let print_machine (machine : Parser.turing_machine) =
+let print_machine (machine : Parser.turing_machine) =
   let print_list label lst =
     print_endline (label ^ ": [" ^ (String.concat ", " lst) ^ "]")
   in
@@ -44,7 +44,21 @@ let check_file_input args =
          | Parser.Left -> "LEFT]\n"
          | Parser.Right -> "RIGHT]\n"));
     ) transitions      
-  ) machine.transitions   *) 
+  ) machine.transitions   
+
+
+(* let print_tape (tape : Tape.tape) = 
+  print_endline "\nPRINTING TAPE... ";
+  print_endline ("Blank character: " ^ String.make 1 tape.blank);
+  print_endline ("Tape data: " ^ tape.data);
+  (* print_endline ("Tape left data: " ^ tape.left);
+  print_endline ("Tape right data: " ^ tape.right);
+  if tape.head >= 0 && tape.head < String.length tape.data then
+    Printf.printf "Tape head: %c\n" (String.get tape.data tape.head)
+  else
+    print_endline "Tape head: Out of bounds\n";
+  print_endline ("Tape size: " ^ string_of_int tape.size);   *)
+  Printf.printf "Tape : [%s<%c>%s]\n\n" tape.left (String.get tape.data tape.head) tape.right *)
 
 
 let () =
@@ -53,20 +67,15 @@ let () =
       print_endline ("STARTING PARSER...");
       (try
          let machine = Parser.parse_turing_machine filename in
-         (* print_machine machine; *)
-         print_endline ("PARSING DONE...");
-         print_endline ("VALIDATING INPUT...");
+         print_machine machine;
+         (* print_endline ("PARSING DONE...");
+         print_endline ("VALIDATING INPUT..."); *)
          Tape.validate_tape_input input machine.alphabet;
          let tape_size = String.length input in
          let tape = Tape.parse_tape input tape_size machine.blank.[0] in
-         print_endline ("INPUT VALIDATED...");
-         let initial_state : Machine.machine_state = {
-           tape;
-           current_state = machine.initial;
-           transitions = machine.transitions;
-         } in
+         (* print_tape tape; *)
+         (* print_endline ("INPUT VALIDATED..."); *)
          print_endline "STARTING MACHINE...";
-         let headers_printed = ref false in
-         Machine.simulate initial_state machine.finals headers_printed;
+         Machine.launch tape machine;
        with Failure msg -> Printf.printf "Error: %s\n" msg; exit 1)
   | None -> exit 1

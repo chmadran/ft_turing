@@ -1,0 +1,3 @@
+(library
+ (name complexity)
+ (libraries cairo2))

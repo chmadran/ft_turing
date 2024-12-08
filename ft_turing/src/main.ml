@@ -77,7 +77,5 @@ let () =
          (* print_endline ("INPUT VALIDATED..."); *)
          print_endline "STARTING MACHINE...";
          Machine.launch tape machine;
-         (* Call plot_complexity to generate the plot *)
-         Complexity.plot_complexity ()
        with Failure msg -> Printf.printf "Error: %s\n" msg; exit 1)
   | None -> exit 1

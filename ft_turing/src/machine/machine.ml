@@ -73,40 +73,48 @@ let step tape machine =
          },
          { machine with initial = transition.to_state })
 
-(** Main Turing machine launcher *)
 let launch tape machine =
-  let rec loop tape machine =
-    if List.mem machine.initial machine.finals then
-      Printf.printf "Machine reached a final state: %s\n" machine.initial
-    else
-      match step tape machine with
-      | None ->
-          Printf.printf "Machine stopped due to an invalid transition.\n"
-      | Some (new_tape, new_machine) -> loop new_tape new_machine
-  in
-  (* Initial machine info *)
-  Printf.printf
-    "********************************************************************************\n\
-     * *\n\
-     * %s *\n\
-     * *\n\
-     ********************************************************************************\n"
-    machine.name;
-  Printf.printf "Alphabet: [ %s ]\n" (String.concat ", " machine.alphabet);
-  Printf.printf "States: [ %s ]\n" (String.concat ", " machine.states);
-  Printf.printf "Initial: %s\n" machine.initial;
-  Printf.printf "Finals: [ %s ]\n" (String.concat ", " machine.finals);
-  (* Print all transitions *)
-  List.iter
-    (fun (state, trans_list) ->
-      List.iter
-        (fun t ->
-          Printf.printf "(%s, %s) -> (%s, %s, %s)\n" state t.read t.to_state
-            t.write
-            (match t.action with Left -> "LEFT" | Right -> "RIGHT"))
-        trans_list)
-    machine.transitions;
-  Printf.printf
-    "********************************************************************************\n";
+let max_steps = 10000 in (* Adjust this limit as necessary *)
+let rec loop tape machine steps =
+  if steps > max_steps then
+    Printf.printf
+      "Simulation terminated after %d steps: potential infinite loop detected.\n"
+      steps
+  else if List.mem machine.initial machine.finals then
+    Printf.printf "Machine reached a final state: %s after %d steps\n"
+      machine.initial steps
+  else
+    match step tape machine with
+    | None ->
+        Printf.printf
+          "Machine stopped due to an invalid transition after %d steps.\n"
+          steps
+    | Some (new_tape, new_machine) ->
+        loop new_tape new_machine (steps + 1)
+in
+(* Initial machine info *)
+Printf.printf
+  "********************************************************************************\n\
+    * *\n\
+    * %s *\n\
+    * *\n\
+    ********************************************************************************\n"
+  machine.name;
+Printf.printf "Alphabet: [ %s ]\n" (String.concat ", " machine.alphabet);
+Printf.printf "States: [ %s ]\n" (String.concat ", " machine.states);
+Printf.printf "Initial: %s\n" machine.initial;
+Printf.printf "Finals: [ %s ]\n" (String.concat ", " machine.finals);
+(* Print all transitions *)
+List.iter
+  (fun (state, trans_list) ->
+    List.iter
+      (fun t ->
+        Printf.printf "(%s, %s) -> (%s, %s, %s)\n" state t.read t.to_state
+          t.write
+          (match t.action with Left -> "LEFT" | Right -> "RIGHT"))
+      trans_list)
+  machine.transitions;
+Printf.printf
+  "********************************************************************************\n";
 
-  loop tape machine
+loop tape machine 0

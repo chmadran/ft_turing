@@ -1,5 +1,11 @@
 # ft_turing
 
+## TODO list
+
+* The blank character, must be part of the alphabet, must NOT be part of the
+input.
+
+
 ## Project Overview
 
 The goal of this project is to write a program able to simulate a single headed, single
@@ -68,6 +74,39 @@ a given character under the head of the machine. A transition is defined as foll
 3. Create the automate
 4. Output the machine's states 
 
+## The machines 
+
+1. **UNARY ADD**
+A machine able to compute an unary addition.
+
+Working input : 11+11=
+Not working input : 1..1
+
+2. **PALINDROME**
+A machine able to decide whether its input is a palindrome or not (whether it is the same forwards and backwards). If it is a palindrome, it will write y on the tape at the end. If it is not a palindrome, it will write n.
+
+Working input : 1111, 11011
+Not working input : 10111
+
+3. **0^n1^n**
+A machine able to decide if the input is a word of the language 0^n1^n, for instance the words 000111 or 0000011111. Before halting, write the result on the tape as a ’n’ or a ’y’ at the right of the rightmost character of the tape.
+
+Working input : 000111
+Not working input : 0001111
+
+4. **0^2n**
+A machine able to decide if the input is a word of the language 0^2n, for instance
+the words 00 or 0000, but not the words 000 or 00000. Before halting, write the
+result on the tape as a ’n’ or a ’y’ at the right of the rightmost character of the
+tape.
+
+Working input : 00, 0000
+Not working input : 000
+
+5. **Machine of machine**
+A machine able to run the first machine of this list, the one computing an unary
+addition. The machine alphabet, states, transitions and input ARE the input of
+the machine you are writing, encoded as you see fit.
 
 ## Research 
 

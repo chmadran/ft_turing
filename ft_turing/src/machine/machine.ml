@@ -31,12 +31,12 @@ let step tape machine =
         transition.to_state transition.write.[0]
         (match transition.action with Left -> "LEFT" | Right -> "RIGHT");
 
-      (* Update the tape *)
+      (* tape gets updated *)
       let updated_data = Bytes.of_string tape.data in
       Bytes.set updated_data tape.head transition.write.[0];
       let new_data = Bytes.to_string updated_data in
 
-      (* Update the tape's head and sections *)
+      (* tape's head and sections get updated*)
       let new_head, new_left, new_right =
         match transition.action with
         | Left ->
@@ -74,7 +74,7 @@ let step tape machine =
          { machine with initial = transition.to_state })
 
 let launch tape machine =
-let max_steps = 10000 in (* Adjust this limit as necessary *)
+let max_steps = 10000 in (* can set this lower *)
 let rec loop tape machine steps =
   if steps > max_steps then
     Printf.printf
@@ -118,3 +118,4 @@ Printf.printf
   "********************************************************************************\n";
 
 loop tape machine 0
+        

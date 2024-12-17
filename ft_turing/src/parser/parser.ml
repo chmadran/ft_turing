@@ -58,7 +58,23 @@ let parse_transitions json =
       (state, transitions)
     ) transition_assoc
 
-(** Parse the entire Turing machine *)
+(** Parse the entire Turing machine from a JSON string *)
+let parse_machine_from_string machine_config =
+  let json = Yojson.Basic.from_string machine_config in
+  try
+    {
+      name = get_field json "name" to_string;
+      alphabet = get_field json "alphabet" (fun j -> j |> to_list |> List.map to_string);
+      blank = get_field json "blank" to_string;
+      states = get_field json "states" (fun j -> j |> to_list |> List.map to_string);
+      initial = get_field json "initial" to_string;
+      finals = get_field json "finals" (fun j -> j |> to_list |> List.map to_string);
+      transitions = get_field json "transitions" parse_transitions;
+    }
+  with Missing_field field ->
+    failwith ("Error: Missing required field in JSON: " ^ field)
+
+(** Parse the entire Turing machine from a file *)
 let parse_turing_machine filename =
   let json = Yojson.Basic.from_file filename in
   try

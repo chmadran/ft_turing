@@ -1,1 +1,1 @@
-111+11=
+make ARG="machines/unary_add/unary_add.json 111+11="

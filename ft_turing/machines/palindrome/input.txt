@@ -1,1 +1,1 @@
-111101111
+make ARG="machines/palindrome/palindrome.json 111101111="

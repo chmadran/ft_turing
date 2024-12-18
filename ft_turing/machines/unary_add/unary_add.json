@@ -2,7 +2,7 @@
     "name" : "unary_add",
     "alphabet": [ "1", ".", "+", "=" ],
     "blank" : ".",
-    "states" : ["replaceone", "addone", "end", "HALT" ],
+    "states" : ["replaceone", "addone", "end", "scanright", "HALT" ],
     "initial" : "scanright",
     "finals" : [ "HALT" ],
     

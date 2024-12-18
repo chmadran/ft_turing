@@ -1,1 +1,1 @@
-000111
+make ARG="machines/0n1n/0n1n.json 110="

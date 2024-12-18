@@ -1,6 +1,33 @@
-(* main.ml *)
+let write_machine_to_json machine filename =
+  let json_content = 
+    let transitions_to_json transitions = 
+      String.concat ",\n" (List.map (fun (state, t_list) ->
+        Printf.sprintf "\"%s\": [\n%s\n]" state 
+          (String.concat ",\n" (List.map (fun t ->
+            Printf.sprintf "  { \"read\": \"%s\", \"to_state\": \"%s\", \"write\": \"%s\", \"action\": \"%s\" }"
+              t.Parser.read t.Parser.to_state t.Parser.write
+              (if t.Parser.action = Parser.Right then "RIGHT" else "LEFT")
+          ) t_list))
+      ) transitions)
+    in
+    Printf.sprintf "{\n  \"name\": \"%s\",\n  \"alphabet\": [%s],\n  \"blank\": \"%s\",\n  \"initial\": \"%s\",\n  \"finals\": [%s],\n  \"states\": [%s],\n  \"transitions\": {%s}\n}"
+      machine.Parser.name
+      (String.concat ", " (List.map (fun s -> Printf.sprintf "\"%s\"" s) machine.Parser.alphabet))
+      machine.Parser.blank
+      machine.Parser.initial
+      (String.concat ", " (List.map (fun s -> Printf.sprintf "\"%s\"" s) machine.Parser.finals))
+      (String.concat ", " (List.map (fun s -> Printf.sprintf "\"%s\"" s) machine.Parser.states))
+      (transitions_to_json machine.Parser.transitions)
+  in
+  let oc = open_out filename in
+  output_string oc json_content;
+  close_out oc
+
+
 
 let check_file_input args =
+  (* Array.iteri (fun i arg -> Printf.printf "argv[%d]: %s\n" i arg) args; *)
+  (* print_endline("Check argv length: " ^ (string_of_int (Array.length args))); *)
   match args with
   | [| _; "--help" |] | [| _; "-h" |] ->
     print_endline "usage: ft_turing [-h] jsonfile input\n";
@@ -12,17 +39,49 @@ let check_file_input args =
     exit 0
   | [| _; filename; input |] when String.length filename >= 5 && String.sub filename (String.length filename - 5) 5 = ".json" ->
     (try
-       let ic = open_in filename in
-       close_in ic;
-       Some (filename, input)
-     with Sys_error err ->
-       print_endline ("Error: " ^ err);
-       None)
+        let ic = open_in filename in
+        close_in ic;
+        Some (filename, input)
+      with Sys_error err ->
+        print_endline ("Error: " ^ err);
+        None)
   | _ ->
-    print_endline "Error: Please provide a JSON file and an input string.";
-    None
+    print_endline "entering utm mode";
+    print_endline("received args: " ^ (String.concat " " (Array.to_list args)));
+    let machine_config_and_inputs = 
+      String.concat " " (Array.to_list (Array.sub args 1 (Array.length args - 1))) 
+    in
+    (* Now split the combined string by semicolons *)
+    let parts = String.split_on_char ';' machine_config_and_inputs in
+    if List.length parts < 2 then
+      (print_endline "Error: Invalid format"; None)
+    else
+      let machine_config = List.hd parts in
+      let input_string_part = List.hd (List.tl parts) in
 
-let print_machine (machine : Parser.turing_machine) =
+      print_endline ("Machine configuration part: " ^ machine_config);
+      print_endline ("Input string part: " ^ input_string_part);
+      (* Extract input from 'input=' part *)
+      let input_string = 
+        try
+          let input = String.split_on_char '=' input_string_part in
+          if List.length input > 1 then  (* Check if there's at least one '=' symbol *)
+            String.concat "=" (List.tl input)  (* Rejoin the parts after the first '=' *)
+          else
+            (print_endline "Error: Missing '=' in input string."; "")
+        with _ -> 
+          (print_endline "Error: Invalid input format."; "")
+      in
+      let filename = "machines/utm.json" in
+      (* Now parse the machine configuration *)
+      print_endline "Writing machine configuration to file...";
+      let machine = Parser.parse_machine_from_string machine_config in
+      write_machine_to_json machine filename;
+      print_endline ("Machine configuration written to: " ^ filename);
+      print_endline ("Input: " ^ input_string);
+      Some (filename, input_string)
+
+(* let print_machine (machine : Parser.turing_machine) =
   let print_list label lst =
     print_endline (label ^ ": [" ^ (String.concat ", " lst) ^ "]")
   in
@@ -44,22 +103,7 @@ let print_machine (machine : Parser.turing_machine) =
          | Parser.Left -> "LEFT]\n"
          | Parser.Right -> "RIGHT]\n"));
     ) transitions      
-  ) machine.transitions   
-
-
-(* let print_tape (tape : Tape.tape) = 
-  print_endline "\nPRINTING TAPE... ";
-  print_endline ("Blank character: " ^ String.make 1 tape.blank);
-  print_endline ("Tape data: " ^ tape.data);
-  (* print_endline ("Tape left data: " ^ tape.left);
-  print_endline ("Tape right data: " ^ tape.right);
-  if tape.head >= 0 && tape.head < String.length tape.data then
-    Printf.printf "Tape head: %c\n" (String.get tape.data tape.head)
-  else
-    print_endline "Tape head: Out of bounds\n";
-  print_endline ("Tape size: " ^ string_of_int tape.size);   *)
-  Printf.printf "Tape : [%s<%c>%s]\n\n" tape.left (String.get tape.data tape.head) tape.right *)
-
+  ) machine.transitions *)
 
 let () =
   match check_file_input (Sys.argv) with
@@ -67,14 +111,11 @@ let () =
       print_endline ("STARTING PARSER...");
       (try
          let machine = Parser.parse_turing_machine filename in
-         print_machine machine;
-         (* print_endline ("PARSING DONE...");
-         print_endline ("VALIDATING INPUT..."); *)
+         (* print_machine machine; *)
+         (* Validate input against machine's alphabet *)
          Tape.validate_tape_input input machine.alphabet;
          let tape_size = String.length input in
          let tape = Tape.parse_tape input tape_size machine.blank.[0] in
-         (* print_tape tape; *)
-         (* print_endline ("INPUT VALIDATED..."); *)
          print_endline "STARTING MACHINE...";
          Machine.launch tape machine;
        with Failure msg -> Printf.printf "Error: %s\n" msg; exit 1)

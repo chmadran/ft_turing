@@ -1,6 +1,12 @@
 # ft_turing
 
+
 ## TODO list
+
+* utm : 
+
+make ARG='{\"name\": \"utm\", \"alphabet\": [\"1\", \".\", \"+\", \"=\"], \"blank\": \".\", \"states\": [\"replaceone\", \"addone\", \"end\", \"HALT\"], \"initial\": \"scanright\", \"finals\": [\"HALT\"], \"transitions\": { \"scanright\": [ { \"read\": \".\", \"to_state\": \"scanright\", \"write\": \".\", \"action\": \"RIGHT\" }, { \"read\": \"1\", \"to_state\": \"scanright\", \"write\": \"1\", \"action\": \"RIGHT\" }, { \"read\": \"+\", \"to_state\": \"scanright\", \"write\": \"+\", \"action\": \"RIGHT\" }, { \"read\": \"=\", \"to_state\": \"addone\", \"write\": \".\", \"action\": \"LEFT\" } ], \"replaceone\": [ { \"read\": \"1\", \"to_state\": \"replaceone\", \"write\": \"1\", \"action\": \"LEFT\" }, { \"read\": \"+\", \"to_state\": \"end\", \"write\": \"1\", \"action\": \"RIGHT\" } ], \"addone\": [ { \"read\": \"1\", \"to_state\": \"replaceone\", \"write\": \"=\", \"action\": \"LEFT\" }, { \"read\": \"+\", \"to_state\": \"HALT\", \"write\": \"1\", \"action\": \"LEFT\" } ], \"end\": [ { \"read\": \"1\", \"to_state\": \"end\", \"write\": \"1\", \"action\": \"RIGHT\" }, { \"read\": \"=\", \"to_state\": \"HALT\", \"write\": \".\", \"action\": \"RIGHT\" } ] } }\;input=111+1='
+
 
 * The blank character, must be part of the alphabet, must NOT be part of the
 input.
@@ -16,8 +22,28 @@ tape Turing machine from a machine description provided in json. This project is
 
 ## How to Run 
 
-```make ARG=[machine_file.json]```
+There are two ways to start this machine : 
+
 ```make ARG="--help"``` or ```make ARG="-h"```
+
+1. The first way is by passing two arguments : 
+* a json file with the machine configuration ; and 
+* an input string 
+
+```make ARG="[machine_file.json] [input string=]"```
+
+2. The second way is by passing a string that contains the machine : 
+* a string with the config and the input, for example : 
+
+```
+JSON_CONFIG;input=INPUT_STRING
+```
+
+Whereby the string gets split between : 
+* the machine : a json file is created with the configuration 
+* the input string
+
+Who then gets sent to the programme as the json file and the input string for parsing and validation before launching the machine. 
 
 
 ## Steps 

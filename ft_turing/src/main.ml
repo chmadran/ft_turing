@@ -49,7 +49,7 @@ let check_file_input args =
     print_endline "entering utm mode";
     print_endline("received args: " ^ (String.concat " " (Array.to_list args)));
     let machine_config_and_inputs = 
-      String.concat " " (Array.to_list (Array.sub args 2 (Array.length args - 2))) 
+      String.concat " " (Array.to_list (Array.sub args 1 (Array.length args - 1))) 
     in
     (* Now split the combined string by semicolons *)
     let parts = String.split_on_char ';' machine_config_and_inputs in
@@ -59,8 +59,9 @@ let check_file_input args =
       let machine_config = List.hd parts in
       let input_string_part = List.hd (List.tl parts) in
 
-      (* Extract input from 'input=' part *)
+      print_endline ("Machine configuration part: " ^ machine_config);
       print_endline ("Input string part: " ^ input_string_part);
+      (* Extract input from 'input=' part *)
       let input_string = 
         try
           let input = String.split_on_char '=' input_string_part in
@@ -73,6 +74,7 @@ let check_file_input args =
       in
       let filename = "machines/utm.json" in
       (* Now parse the machine configuration *)
+      print_endline "Writing machine configuration to file...";
       let machine = Parser.parse_machine_from_string machine_config in
       write_machine_to_json machine filename;
       print_endline ("Machine configuration written to: " ^ filename);

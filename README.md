@@ -1,17 +1,5 @@
 # ft_turing
 
-
-## TODO list
-
-* utm : 
-
-make ARG='{\"name\": \"utm\", \"alphabet\": [\"1\", \".\", \"+\", \"=\"], \"blank\": \".\", \"states\": [\"replaceone\", \"addone\", \"end\", \"HALT\"], \"initial\": \"scanright\", \"finals\": [\"HALT\"], \"transitions\": { \"scanright\": [ { \"read\": \".\", \"to_state\": \"scanright\", \"write\": \".\", \"action\": \"RIGHT\" }, { \"read\": \"1\", \"to_state\": \"scanright\", \"write\": \"1\", \"action\": \"RIGHT\" }, { \"read\": \"+\", \"to_state\": \"scanright\", \"write\": \"+\", \"action\": \"RIGHT\" }, { \"read\": \"=\", \"to_state\": \"addone\", \"write\": \".\", \"action\": \"LEFT\" } ], \"replaceone\": [ { \"read\": \"1\", \"to_state\": \"replaceone\", \"write\": \"1\", \"action\": \"LEFT\" }, { \"read\": \"+\", \"to_state\": \"end\", \"write\": \"1\", \"action\": \"RIGHT\" } ], \"addone\": [ { \"read\": \"1\", \"to_state\": \"replaceone\", \"write\": \"=\", \"action\": \"LEFT\" }, { \"read\": \"+\", \"to_state\": \"HALT\", \"write\": \"1\", \"action\": \"LEFT\" } ], \"end\": [ { \"read\": \"1\", \"to_state\": \"end\", \"write\": \"1\", \"action\": \"RIGHT\" }, { \"read\": \"=\", \"to_state\": \"HALT\", \"write\": \".\", \"action\": \"RIGHT\" } ] } }\;input=111+1='
-
-
-* The blank character, must be part of the alphabet, must NOT be part of the
-input.
-
-
 ## Project Overview
 
 The goal of this project is to write a program able to simulate a single headed, single
@@ -21,6 +9,8 @@ tape Turing machine from a machine description provided in json. This project is
 
 
 ## How to Run 
+
+Please note that the blank character, while it must be part of the alphabet, must NOT be part of the input.
 
 There are two ways to start this machine : 
 
@@ -45,29 +35,47 @@ Whereby the string gets split between :
 
 Who then gets sent to the programme as the json file and the input string for parsing and validation before launching the machine. 
 
+## Machine
 
-## Steps 
 
-Setup and File Input Handling:
-Implement file input validation to check if the JSON file and machine input are provided.
-Handle cases where either file is missing or incorrect.
+**unary_add**   
+Objective : being able to compute a unary addition (one +)
+* Go all the way to the end of tape marker (=)
+* Amend the end marker to a blank (.) and start heading LEFT
+* Change first 1 to = (except if 1+1)
+* Head left until you find + and change it to 1
 
-Parsing the JSON Description:
-Parse the JSON machine description to extract the machine's components (alphabet, states, transitions, etc.).
-Handle any malformed or missing fields in the description, ensuring the program doesn't crash and provides relevant error messages.
+**unary_sub**    
+Objective : being able to compute a unary substraction (one -)
+* Go all the way to the end of tape marker (=)
+* Amend the end marker to a blank (.) and start heading LEFT, mode eraseone
+* Change first 1 to =, mode subone
+* Skip until find a 1 and change it to '.', else if only encouter '-' then HALT 
 
-Simulating the Turing Machine:
-Initialize the machine state, including tape, head position, and current state.
-Implement the simulation based on the parsed transitions and machine rules.
+**0n1n**   
+Objective : Is there the same number of 1 and 0
+* Check first character, amend it to '.' to mark the beggining of the tape
+* If 1, look for matching 0 | if 0, find matching 1
+* Mark match with x (seen)
+* Reset head to beggining (.)
+* Process till find 1 or 0 and look for match
+* Once all characters have been matched (x) and you encounter end of tape marker (=) then go to end it will recheck and mark as true
+* If no match is found it will go to false
 
-Machine Execution:
-Simulate the Turing machine step by step, updating the tape, head position, and current state according to the transition rules.
-Provide output at each step, showing the current tape state and head position.
-Handle the HALT state and any potential errors (like getting stuck in an invalid state).
+**02n**   
+Objective : Is the input an even number of 0s, write y or n 
+* Look for the first 0, once reached we have an odd number (1)
+* Look for an even number of 0, once reached we have an even number (2)
+* And so on until we reach =
+* If we are looking for an odd number, it means current status is even so go to true (opposite if even)
 
-User Interaction and Error Handling:
-Display relevant information to the user, including a readable form of the transitions, the initial state, the tape, etc.
-Implement appropriate error messages if the machine is in a blocked state (i.e., no valid transition exists).
+**palindrome**   
+Objective : Is the input a palindrome or not, write y or n 
+* Check first character, amend it to '.' to mark the beggining of the tape
+* Head to the end of the tape (=) 
+* From the left/end, look for the matching (same) character 
+* Until we only have 1 character left (true)
+* Or two different characters left (false)
 
 ## Parsing
 

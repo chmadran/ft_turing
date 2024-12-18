@@ -1,32 +1,26 @@
 open Parser
 
-(** Validate that all characters in the alphabet are of length 1. *)
 let validate_alphabet alphabet =
   if List.exists (fun s -> String.length s <> 1) alphabet then
     failwith "Error: All alphabet characters must be single characters."
 
-(** Validate that the blank character is part of the alphabet. *)
 let validate_blank blank alphabet =
   if not (List.mem blank alphabet) then
     failwith "Error: Blank character must be part of the alphabet."
 
-(** Validate that the initial state is part of the states list. *)
 let validate_initial_state initial states =
   if not (List.mem initial states) then
     failwith "Error: Initial state must be part of the states list."
 
-(** Validate that all final states are part of the states list. *)
 let validate_finals finals states =
   if not (List.for_all (fun s -> List.mem s states) finals) then
     failwith "Error: All final states must be part of the states list."
 
-(** Validate the transitions. *)
 let validate_transitions transitions states alphabet =
   List.iter (fun (state, trans_list) ->
       if not (List.mem state states) then
         failwith ("Error: Undefined state in transitions: " ^ state);
       
-      (* Detect duplicate transitions *)
       let seen_transitions = Hashtbl.create (List.length trans_list) in
       List.iter (fun t ->
           if not (List.mem t.read alphabet) then
@@ -36,7 +30,6 @@ let validate_transitions transitions states alphabet =
           if not (List.mem t.to_state states) then
             failwith ("Error: Undefined state in transition: " ^ t.to_state);
           
-          (* Check for duplicates *)
           let key = (t.read, t.write, t.to_state, t.action) in
           if Hashtbl.mem seen_transitions key then
             failwith ("Error: Duplicate transition detected for state " ^ state ^
@@ -45,12 +38,10 @@ let validate_transitions transitions states alphabet =
         ) trans_list
     ) transitions
 
-(** Validate the machine's name is not empty. *)
 let validate_name name =
   if name = "" then
     failwith "Error: Machine name cannot be empty."
 
-(** Validate the entire Turing machine. *)
 let validate_machine (machine : Parser.turing_machine) =
   validate_name machine.name;
   validate_alphabet machine.alphabet;
@@ -58,4 +49,4 @@ let validate_machine (machine : Parser.turing_machine) =
   validate_initial_state machine.initial machine.states;
   validate_finals machine.finals machine.states;
   validate_transitions machine.transitions machine.states machine.alphabet;
-  true (* Return true if no exceptions were raised *)
+  true 

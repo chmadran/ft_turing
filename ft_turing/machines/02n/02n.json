@@ -1,0 +1,31 @@
+{
+  "name" : "02n",
+  "alphabet": [ "0", ".", "y", "n", "="],
+  "blank" : ".",
+  "states" : [ "init", "even", "odd", "true", "false", "HALT"],
+  "initial" : "init",
+  "finals" : [ "HALT" ],
+  "transitions" : {
+  "init": [
+    { "read" : "0", "to_state": "even", "write": "x", "action": "RIGHT"},
+    { "read" : ".", "to_state": "init", "write": ".", "action": "RIGHT"},
+    { "read" : "=", "to_state": "false", "write": "n", "action": "RIGHT"}
+  ],
+  "even": [
+    { "read" : "0", "to_state": "odd", "write": "x", "action": "RIGHT"},
+    { "read" : ".", "to_state": "even", "write": ".", "action": "RIGHT"},
+    { "read" : "=", "to_state": "false", "write": "n", "action": "RIGHT"}
+  ],
+  "odd": [
+    { "read" : "0", "to_state": "even", "write": "x", "action": "RIGHT"},
+    { "read" : ".", "to_state": "odd", "write": ".", "action": "RIGHT"},
+    { "read" : "=", "to_state": "true", "write": "y", "action": "RIGHT"}
+  ],
+  "true": [
+    { "read" : "y", "to_state": "HALT", "write": "y", "action": "RIGHT"}
+  ],
+  "false": [
+    { "read" : "n", "to_state": "HALT", "write": "n", "action": "RIGHT"}
+  ]
+  }
+}

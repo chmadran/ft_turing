@@ -29,7 +29,7 @@
       { "read": "1", "to_state": "find_matching0", "write": "1", "action": "RIGHT" },
       { "read": "x", "to_state": "find_matching0", "write": "x", "action": "RIGHT" },
       { "read": "0", "to_state": "reset_head", "write": "x", "action": "LEFT" },
-      { "read": "=", "to_state": "false", "write": "n", "action": "RIGHT" }
+      { "read": "=", "to_state": "false", "write": "=", "action": "RIGHT" }
     ],
     "reset_head": [
       { "read": "x", "to_state": "reset_head", "write": "x", "action": "LEFT" },

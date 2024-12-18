@@ -1,14 +1,12 @@
 open Tape
 open Parser
 
-(** Helper to find the applicable transition for the current state and character *)
 let find_transition transitions state char =
   match List.assoc_opt state transitions with
   | None -> None
   | Some trans_list ->
       List.find_opt (fun t -> t.read = String.make 1 char) trans_list
 
-(** Execute a single step of the Turing machine *)
 let step tape machine =
   let current_char = tape.data.[tape.head] in
   match find_transition machine.transitions machine.initial current_char with
@@ -17,7 +15,6 @@ let step tape machine =
         machine.initial current_char;
       None
   | Some transition ->
-      (* Print transition details *)
       let left = String.sub tape.data 0 tape.head in
       let right =
         if tape.head + 1 < tape.size then
@@ -31,12 +28,10 @@ let step tape machine =
         transition.to_state transition.write.[0]
         (match transition.action with Left -> "LEFT" | Right -> "RIGHT");
 
-      (* tape gets updated *)
       let updated_data = Bytes.of_string tape.data in
       Bytes.set updated_data tape.head transition.write.[0];
       let new_data = Bytes.to_string updated_data in
 
-      (* tape's head and sections get updated*)
       let new_head, new_left, new_right =
         match transition.action with
         | Left ->
@@ -61,7 +56,6 @@ let step tape machine =
             (new_head, new_left, new_right)
       in
 
-      (* Updated tape and machine state *)
       Some
         ({
            blank = tape.blank;
@@ -74,7 +68,7 @@ let step tape machine =
          { machine with initial = transition.to_state })
 
 let launch tape machine =
-let max_steps = 10000 in (* can set this lower *)
+let max_steps = 10000 in
 let rec loop tape machine steps =
   if steps > max_steps then
     Printf.printf
@@ -92,7 +86,6 @@ let rec loop tape machine steps =
     | Some (new_tape, new_machine) ->
         loop new_tape new_machine (steps + 1)
 in
-(* Initial machine info *)
 Printf.printf
   "********************************************************************************\n\
     * *\n\
@@ -104,7 +97,6 @@ Printf.printf "Alphabet: [ %s ]\n" (String.concat ", " machine.alphabet);
 Printf.printf "States: [ %s ]\n" (String.concat ", " machine.states);
 Printf.printf "Initial: %s\n" machine.initial;
 Printf.printf "Finals: [ %s ]\n" (String.concat ", " machine.finals);
-(* Print all transitions *)
 List.iter
   (fun (state, trans_list) ->
     List.iter

@@ -1,6 +1,5 @@
 open Yojson.Basic.Util
 
-(** Type definitions for the Turing machine *)
 type action = Left | Right
 
 type transition = {
@@ -20,21 +19,17 @@ type turing_machine = {
   transitions : (string * transition list) list;
 }
 
-(** Custom exception for missing JSON fields *)
 exception Missing_field of string
 
-(** Helper to safely retrieve a JSON field and provide a detailed error if it's missing *)
 let get_field json field to_type =
   try to_type (json |> member field)
   with Type_error _ -> raise (Missing_field field)
 
-(** Helper to convert string to action type *)
 let action_of_string = function
   | "LEFT" -> Left
   | "RIGHT" -> Right
   | s -> failwith ("Invalid action: " ^ s)
 
-(** Parse a single transition *)
 let parse_transition json =
   {
     read = get_field json "read" to_string;
@@ -43,7 +38,6 @@ let parse_transition json =
     action = get_field json "action" to_string |> action_of_string;
   }
 
-(** Parse transitions for a state and check for duplicate keys or empty transitions *)
 let parse_transitions json =
   let transition_assoc = json |> to_assoc in
   if transition_assoc = [] then
@@ -58,7 +52,6 @@ let parse_transitions json =
       (state, transitions)
     ) transition_assoc
 
-(** Parse the entire Turing machine from a JSON string *)
 let parse_machine_from_string machine_config =
 
   let json = Yojson.Basic.from_string machine_config in
@@ -76,7 +69,6 @@ let parse_machine_from_string machine_config =
     failwith ("Error: Missing required field in JSON: " ^ field)
 
 
-(** Parse the entire Turing machine from a file *)
 let parse_turing_machine filename =
   let json = Yojson.Basic.from_file filename in
   try

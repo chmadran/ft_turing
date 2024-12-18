@@ -26,8 +26,6 @@ let write_machine_to_json machine filename =
 
 
 let check_file_input args =
-  (* Array.iteri (fun i arg -> Printf.printf "argv[%d]: %s\n" i arg) args; *)
-  (* print_endline("Check argv length: " ^ (string_of_int (Array.length args))); *)
   match args with
   | [| _; "--help" |] | [| _; "-h" |] ->
     print_endline "usage: ft_turing [-h] jsonfile input\n";
@@ -51,7 +49,6 @@ let check_file_input args =
     let machine_config_and_inputs = 
       String.concat " " (Array.to_list (Array.sub args 1 (Array.length args - 1))) 
     in
-    (* Now split the combined string by semicolons *)
     let parts = String.split_on_char ';' machine_config_and_inputs in
     if List.length parts < 2 then
       (print_endline "Error: Invalid format"; None)
@@ -61,19 +58,17 @@ let check_file_input args =
 
       print_endline ("Machine configuration part: " ^ machine_config);
       print_endline ("Input string part: " ^ input_string_part);
-      (* Extract input from 'input=' part *)
       let input_string = 
         try
           let input = String.split_on_char '=' input_string_part in
-          if List.length input > 1 then  (* Check if there's at least one '=' symbol *)
-            String.concat "=" (List.tl input)  (* Rejoin the parts after the first '=' *)
+          if List.length input > 1 then 
+            String.concat "=" (List.tl input)
           else
             (print_endline "Error: Missing '=' in input string."; "")
         with _ -> 
           (print_endline "Error: Invalid input format."; "")
       in
       let filename = "machines/utm.json" in
-      (* Now parse the machine configuration *)
       print_endline "Writing machine configuration to file...";
       let machine = Parser.parse_machine_from_string machine_config in
       write_machine_to_json machine filename;
@@ -81,7 +76,7 @@ let check_file_input args =
       print_endline ("Input: " ^ input_string);
       Some (filename, input_string)
 
-(* let print_machine (machine : Parser.turing_machine) =
+let print_machine (machine : Parser.turing_machine) =
   let print_list label lst =
     print_endline (label ^ ": [" ^ (String.concat ", " lst) ^ "]")
   in
@@ -103,7 +98,7 @@ let check_file_input args =
          | Parser.Left -> "LEFT]\n"
          | Parser.Right -> "RIGHT]\n"));
     ) transitions      
-  ) machine.transitions *)
+  ) machine.transitions
 
 let () =
   match check_file_input (Sys.argv) with
@@ -111,9 +106,8 @@ let () =
       print_endline ("STARTING PARSER...");
       (try
          let machine = Parser.parse_turing_machine filename in
-         (* print_machine machine; *)
-         (* Validate input against machine's alphabet *)
-         Tape.validate_tape_input input machine.alphabet;
+         print_machine machine;
+         Tape.validate_tape_input input machine.alphabet machine.blank.[0];
          let tape_size = String.length input in
          let tape = Tape.parse_tape input tape_size machine.blank.[0] in
          print_endline "STARTING MACHINE...";

@@ -14,16 +14,9 @@ type turing_machine = {
   states : string list;
   initial : string;
   finals : string list;
-  transitions : (string * transition list) list; (* e.g scanright gets matched to a few transitions *)
+  transitions : (string * transition list) list;
 }
 
-(** Parse a Turing machine description from a JSON file. 
-    @param filename The path to the JSON file.
-    @return A [turing_machine] record if parsing is successful. *)
 val parse_turing_machine : string -> turing_machine
 
-
-(** Parse a Turing machine description from a string in the case of utm. 
-    @param filename The string with the config.
-    @return A [turing_machine] record if parsing is successful. *)
 val parse_machine_from_string : string -> turing_machine

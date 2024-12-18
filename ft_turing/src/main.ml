@@ -101,16 +101,27 @@ let print_machine (machine : Parser.turing_machine) =
   ) machine.transitions
 
 let () =
-  match check_file_input (Sys.argv) with
-  | Some (filename, input) -> 
-      print_endline ("STARTING PARSER...");
-      (try
-         let machine = Parser.parse_turing_machine filename in
-         print_machine machine;
-         Tape.validate_tape_input input machine.alphabet machine.blank.[0];
-         let tape_size = String.length input in
-         let tape = Tape.parse_tape input tape_size machine.blank.[0] in
-         print_endline "STARTING MACHINE...";
-         Machine.launch tape machine;
-       with Failure msg -> Printf.printf "Error: %s\n" msg; exit 1)
-  | None -> exit 1
+match check_file_input (Sys.argv) with
+| Some (filename, input) -> 
+    print_endline "STARTING PARSER...";
+    (try
+        let machine = Parser.parse_turing_machine filename in
+        
+        (* Validate the Turing machine *)
+        (try
+          Validator.validate_machine machine;
+          print_endline "Machine validated successfully."
+        with Failure msg ->
+          Printf.printf "Validation Error: %s\n" msg;
+          exit 1);
+
+        print_machine machine;
+        Tape.validate_tape_input input machine.alphabet machine.blank.[0];
+        let tape_size = String.length input in
+        let tape = Tape.parse_tape input tape_size machine.blank.[0] in
+        print_endline "STARTING MACHINE...";
+        Machine.launch tape machine;
+      with Failure msg ->
+        Printf.printf "Error: %s\n" msg; exit 1)
+| None -> exit 1
+

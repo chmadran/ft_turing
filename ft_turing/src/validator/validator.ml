@@ -5,8 +5,10 @@ let validate_alphabet alphabet =
     failwith "Error: All alphabet characters must be single characters."
 
 let validate_blank blank alphabet =
+  if String.length blank <> 1 then
+    failwith "Error: Blank character must be a single character.";
   if not (List.mem blank alphabet) then
-    failwith "Error: Blank character must be part of the alphabet."
+    failwith "Error: Blank character must be part of the alphabet."    
 
 let validate_initial_state initial states =
   if not (List.mem initial states) then
@@ -49,4 +51,3 @@ let validate_machine (machine : Parser.turing_machine) =
   validate_initial_state machine.initial machine.states;
   validate_finals machine.finals machine.states;
   validate_transitions machine.transitions machine.states machine.alphabet;
-  true 
